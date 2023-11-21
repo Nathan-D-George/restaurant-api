@@ -3,16 +3,18 @@ const express    = require('express');
 const app        = express();
 const { logger } = require('./middleware/logHandler');
 const errorHandler = require('./middleware/errorHandler');
+const path       = require('path');
 
 app.use(logger);
-app.use( express.json())
 
-app.use( express.json() );
+app.use( express.json() ); 
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3500;
 
 app.use('/',      require( './routes/rootRoutes' ));
 app.use('/about', require( './routes/aboutRoutes'));
+app.use('/meals', require( './routes/mealRoutes' ));
+app.use('users',  require( './routes/userRoutes' ));
 
 
 app.all('*', (req, res) => {
@@ -29,3 +31,4 @@ app.all('*', (req, res) => {
 
 app.use(errorHandler);
 app.listen( port, () => console.log(`Server running on http://localhost:${port}`) );
+
