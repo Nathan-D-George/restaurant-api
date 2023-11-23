@@ -10,15 +10,15 @@ const createMeal = async (req, res) => {
   }
   try {
     const meal = await Meal.create({
-        name:  req.body.meal,
+        name:  req.body.name,
         price: req.body.price,
         size:  req.body.size
       }
     );
-    res.status(200).json({ 'success': 'meal successfully created' }); 
+    res.status(201).json({ 'success': `meal ${meal.name} successfully created` }); 
   } catch (error) {
     console.log(error);
-  }  
+  } 
 }
 
 const updateMeal = async (req, res) => {
@@ -51,9 +51,8 @@ const deleteMeal = async (req, res) => {
   }
 
   try {
-    const result = await meal.deleteOne();
+    await meal.deleteOne();
     res.send(200).json({ 'success': 'the meal was deleted' });
-    console.log(result);
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
@@ -74,18 +73,35 @@ const listMeals = async (req, res) => {
 }
 
 const getMeal = async (req, res) => {
-  const user = await User.find( req.query );
-  if (!user) {
-    return res.status(404).json({ 'not found': 'no user found' });
+  if (!req?.params?.id) {
+    return res.status(400).json({ 'missing': 'id must be provided' });
   }
+
   try {
-    res.status(200).json( user );
+    const meal = await Meal.findById( req.params.id );
+    if (!meal) {
+      return res.status(404).json({ 'not found': 'no meal found' });
+    }
+    res.status(200).json( meal );
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
   }
 }
 
+const searchMeal = async (req, res) => {
+  const meal = await Meal.find( req.query );
+  try {
+    if (!meal) {
+      return res.status(400).json({ 'not found': 'no meal found using given parameters' });
+    }
+    res.status(200).json(meal);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ 'error': error });
+  }
+}
+
 module.exports = { 
-  createMeal, updateMeal, deleteMeal, listMeals, getMeal
+  createMeal, updateMeal, deleteMeal, listMeals, getMeal, searchMeal
 };

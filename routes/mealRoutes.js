@@ -8,6 +8,9 @@ router.route('/')
       .put(   mealsController.updateMeal)
       .delete(mealsController.deleteMeal);
 
+router.route('/search')
+      .get(mealsController.searchMeal);
+
 router.route('/:id')
       .get(mealsController.getMeal);
 
